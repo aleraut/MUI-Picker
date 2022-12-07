@@ -1,13 +1,19 @@
 import React, { useState, useRef } from 'react';
-import TodoTable from './TodoTable.js';
 import { AgGridReact } from 'ag-grid-react';
 import 'ag-grid-community/dist/styles/ag-grid.css';
 import 'ag-grid-community/dist/styles/ag-theme-material.css';
+import Button from '@mui/material/Button';
+import TextField from '@mui/material/TextField';
+import Stack from '@mui/material/Stack';
+import { AdapterMoment } from '@mui/x-date-pickers/AdapterMoment';
+import { LocalizationProvider } from '@mui/x-date-pickers';
+import { DesktopDatePicker } from '@mui/x-date-pickers/DesktopDatePicker';
 
 
 function TodoList() {
     const [desc, setDesc] = useState({description: '', date: '', priority: ''});
     const [todos, setTodos] = useState([]);
+    const [selectedDate, setSelectedDate] = useState(null);
     const gridRef = useRef();
 
     const columns = [
@@ -18,12 +24,12 @@ function TodoList() {
   
     const inputChanged = (event) => {
       setDesc({...desc, [event.target.name]: event.target.value});
-    }
+    };
   
     const addTodo = (event) => {
       event.preventDefault();
       setTodos([...todos, desc]);
-    }
+    };
 
     const deleteTodo = () => {
         if (gridRef.current.getSelectedNodes().length > 0) {
@@ -32,15 +38,31 @@ function TodoList() {
         } else {
             alert('Select row first');
         }
-    }
+    };
+
+      const handleDateChange = (newValue) => {
+        const newSelectedDate = newValue.toString();
+        setSelectedDate(newSelectedDate)
+        setDesc({...desc, date: newSelectedDate})      
+    };
   
     return (
         <div className='App'>
-        <input type="date" onChange={inputChanged} placeholder="Date" name="date" value={desc.date}/>
-        <input type="text" onChange={inputChanged} placeholder="Description" name="description" value={desc.description}/>
-        <input type="text" onChange={inputChanged} placeholder="Priority" name="priority" value={desc.priority}/>
-        <button onClick={addTodo}>Add</button>
-        <button onClick={deleteTodo}>Delete</button>
+        <LocalizationProvider dateAdapter={AdapterMoment}>
+        <Stack direction='row' spacing={2} justifyContent='center' alignItems='center'>
+        <DesktopDatePicker
+          label="Date desktop"
+          inputFormat="MM/DD/YYYY"
+          value={selectedDate}
+          onChange={handleDateChange}
+          renderInput={(params) => <TextField {...params} />}
+        />
+        <TextField type="text" onChange={inputChanged} placeholder="Description" name="description" value={desc.description}/>
+        <TextField type="text" onChange={inputChanged} placeholder="Priority" name="priority" value={desc.priority}/>
+        <Button onClick={addTodo} variant="contained">Add</Button>
+        <Button onClick={deleteTodo} variant="contained">Delete</Button>
+        </Stack>
+        </LocalizationProvider>
 
         <div className="ag-theme-material"
            style={{height: '700px', width: '70%', margin: 'auto'}} >
@@ -52,7 +74,6 @@ function TodoList() {
                 rowData={todos}>
             </AgGridReact>
         </div>
-        <TodoTable todos={todos} setTodos={setTodos} />
       </div>
     );
   };
