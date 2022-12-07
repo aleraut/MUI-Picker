@@ -34,7 +34,9 @@ function TodoList() {
               todos.map((desc, index) => <tr key={index}>
                 <td>{desc.description}</td>
                 <td>{desc.date}</td>
-                </tr>)
+                <td><input type="button" value="Delete" onClick={()=> setTodos(todos.filter((desc, i) => i !== index))}/></td>
+                </tr>
+              )
             }
           </tbody>
         </table>   
