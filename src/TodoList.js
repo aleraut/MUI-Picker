@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import TodoTable from './TodoTable.js';
 
 
 function TodoList() {
@@ -24,22 +25,8 @@ function TodoList() {
         <label>Date:</label>
         <input name='date' type="text" onChange={inputChanged} value={desc.date}/>
         <input type='submit' value='Add' />
-        </form>
-
-
-        <table>
-          <tbody>
-            <tr><th>Description</th><th>Date</th></tr>
-            {
-              todos.map((desc, index) => <tr key={index}>
-                <td>{desc.description}</td>
-                <td>{desc.date}</td>
-                <td><input type="button" value="Delete" onClick={()=> setTodos(todos.filter((desc, i) => i !== index))}/></td>
-                </tr>
-              )
-            }
-          </tbody>
-        </table>   
+        </form> 
+        <TodoTable todos={todos} setTodos={setTodos} />
       </div>
     );
   };
